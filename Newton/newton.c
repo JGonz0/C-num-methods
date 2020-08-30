@@ -3,36 +3,33 @@
 #include <math.h>
 
 double function(double x){
-    return 9*pow(x,2)-10;
+    return x*x*x - x - 2;
 }
 
-double derive(double (*f)(double), double x0)
-{
-    const double delta = 1.0e-6; //
-    double x1 = x0 - delta;
-    double x2 = x0 + delta;
-    double y1 = f(x1);
-    double y2 = f(x2);
-    return (y2 - y1) / (x2 - x1);
+double derive(double (*func)(double), double x0){
+    double delta = 1.0e-6;
+    return (func(x0 + delta) - func(x0))/delta;
 }
 
 double newton_method(double x0, float epsilon){
-    double x1;
-
-    x1 = x0 - function(x0)/derive(function,x0);
-    printf("%f \n", x1);
-
-    if(fabsf(x1) < epsilon){
-        printf("%f", x1);
-        return x1;
-    }else{
-        printf("ayuwoki\n");
-        return newton_method(x1,epsilon);
+    int iter = 1;
+    double delta = -function(x0)/derive(function,x0);
+    double x1 = x0 + delta;
+    
+    while(epsilon <= fabs(function(x1))){
+        iter++;
+        delta = -function(x1)/derive(function,x1);
+        x1 = x1 + delta;
     }
+    
+    printf("El numero de iteraciones es: %d", iter);
+    printf("El valor de la raíz es: %lf \n", x1);
+    printf("El valor de la funcion en la raiz es: %lf \n", function(x1));
+    return x1;
 }
 
 int main(){
-    double init = 10;
-    float epsilon = 0.01;
+    double init = 1;
+    float epsilon = 0.001;
     newton_method(init,epsilon);
 }
